@@ -18,10 +18,5 @@
     "psr-4": {
       "fk\\": ""
     }
-  },
-  "extra": {
-    "branch-alias": {
-      "master": "1.0.0"
-    }
   }
 }
