@@ -1,0 +1,25 @@
+{
+  "name": "fk/queue",
+  "type": "library",
+  "description": "PHP based queue execution program",
+  "keywords": ["queue"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Felix"
+    }
+  ],
+  "require": {
+    "php": "^7.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0",
+    "squizlabs/php_codesniffer": "~1.5",
+    "ext-intl": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "fk\\": ""
+    }
+  },
+}
