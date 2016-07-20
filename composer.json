@@ -2,7 +2,9 @@
   "name": "fk/queue",
   "type": "library",
   "description": "PHP based queue execution program",
-  "keywords": ["queue"],
+  "keywords": [
+    "queue"
+  ],
   "license": "MIT",
   "authors": [
     {
