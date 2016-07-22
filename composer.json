@@ -16,7 +16,7 @@
   },
   "autoload": {
     "psr-4": {
-      "fk\\quque": ""
+      "fk\\queue\\": ""
     }
   },
   "minimum-stability": "dev",
