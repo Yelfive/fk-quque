@@ -8,9 +8,12 @@ namespace fk\queue\commands;
 
 use yii\base\InvalidCallException;
 
-abstract class Command
+abstract class Command implements CommandInterface
 {
 
+    /**
+     * @var array|string
+     */
     protected $command = [];
 
     public function __construct($cmd)

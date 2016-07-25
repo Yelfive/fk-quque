@@ -17,8 +17,11 @@ interface EngineInterface
      * and with this parameter,
      * each class implements this interface should write to cache or db
      * the cmd line in the string form
-     * @param array $cmd Cmd to be applied
+     * @param string $cmd Cmd to be applied
      * @return bool Whether get in queue successfully
      */
-    public function in(array $cmd): bool;
+    public function in(string $cmd): bool;
+
+    public function out();
+
 }
