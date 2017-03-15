@@ -11,8 +11,16 @@ use yii\base\InvalidConfigException;
 /**
  * @property array|string $command
  * ```php
+ * // php yii match/clean user tag
  * $command = ['match/clean', 'user', 'tag']
+ *
+ * // also can be passed like this
  * $command = 'match/clean user tag'
+ *
+ * // If the param is an array, it will be json_encoded
+ * // php yii match/clean "{\"user\"=>1,\"created_by\"=>2}"
+ * $command = ['match/clean', ['user' => '1', 'created_by' => 2]]
+ *
  * ```
  */
 class YiiCommand extends Command
@@ -27,13 +35,11 @@ class YiiCommand extends Command
         if (!$this->yiiPath) {
             $this->yiiPath = dirname(\Yii::$app->getBasePath());
         }
-//        \Yii::error($this->command);
         if (is_array($this->command)) {
             $command = array_shift($this->command);
             foreach ($this->command as $v) {
                 $command .= ' "' . addslashes(is_string($v) ? $v : $this->encode($v)) . '"';
             }
-//            \Yii::error([$this->command, $command]);
         } else if (is_string($this->command)) {
             $command = $this->command;
         } else {
@@ -41,7 +47,6 @@ class YiiCommand extends Command
         }
 
         $command = "php $this->yiiPath/yii $command";
-
         return [$command];
     }
 

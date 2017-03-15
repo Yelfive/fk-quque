@@ -22,6 +22,7 @@ return [
 Yii::$app->queue->in('ls -l'); // bash> ls -l
 Yii::$app->queue->in(new YiiCommand(['migrate'])); // bash> php yii migrate
 ```
+You can write your own `XXCommand` to parse a command, but in the end, a bash command should be returned
 
 3. map of console
 ```php
@@ -39,3 +40,23 @@ return [
 ```php
 php yii queue/start
 ```
+
+---
+
+Command
+-------
+Writing your own command by extends `\fk\queue\commands\Command` and overwrite method `CommandInterface::parse`
+```php
+<?php
+
+class MyCommand extends \fk\queue\commands\Command
+{
+
+    public $command;
+
+    public function parse() {
+        // Parse your command with its property `command`
+    }
+}
+```
+

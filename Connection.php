@@ -55,7 +55,7 @@ class Connection
 
         is_array($cmd) && $cmd = implode(' && ', $cmd);
 
-        return $this->getEngine()->in($cmd);
+        return $cmd ? $this->getEngine()->in($cmd) : false;
     }
 
     /**
@@ -75,8 +75,6 @@ class Connection
                         'message' => $message
                     ], true));
             }
-        } else {
-            $this->log('Cmd popped out from queue is empty');
         }
         echo "done!\n";
     }
@@ -110,7 +108,7 @@ class Connection
     protected function getMessage($code)
     {
         $messages = [
-            1 => 'Catchall for general errors',
+            1 => 'Command exited with exception',
             2 => 'Misuse of shell built-ins (according to Bash documentation)',
             126 => 'Command invoked cannot execute',
             127 => 'Command not found',
