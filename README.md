@@ -23,6 +23,7 @@ Yii::$app->queue->in('ls -l'); // bash> ls -l
 Yii::$app->queue->in(new YiiCommand(['migrate'])); // bash> php yii migrate
 ```
 You can write your own `XXCommand` to parse a command, but in the end, a bash command should be returned
+If the argument for `in` is empty, then the cmd will be ignored
 
 3. map of console
 ```php
