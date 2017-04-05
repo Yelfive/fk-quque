@@ -63,9 +63,10 @@ class Connection
      */
     public function execute()
     {
+        // TODO: echo -> log, `[date] message`
         $cmd = $this->getEngine()->out();
-        echo "running command $cmd\n";
         if ($cmd) {
+            echo "running command $cmd\n";
             exec($cmd, $result, $code);
             if ($code !== 0) {
                 $message = $this->getMessage($code) ?: 'No message';
@@ -75,8 +76,10 @@ class Connection
                         'message' => $message
                     ], true));
             }
+            echo "done!\n";
+        } else {
+            echo "Nil\n";
         }
-        echo "done!\n";
     }
 
     /**
