@@ -12,7 +12,10 @@
     }
   ],
   "require": {
-    "php": ">=7.0"
+    "php": ">=7.0",
+    "fk/daemon": "",
+    "fk/helpers": "",
+    "pda/pheanstalk": ""
   },
   "autoload": {
     "psr-4": {

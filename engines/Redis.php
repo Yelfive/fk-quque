@@ -15,9 +15,10 @@ class Redis implements EngineInterface
 
     /**
      * @param string $cmd Cmd to be applied
+     * @param int $delay
      * @return bool Whether get in queue successfully
      */
-    public function in(string $cmd): bool
+    public function in(string $cmd, $delay = 0): bool
     {
         \Yii::$app->redis->rpush($this->key, $cmd);
         return true;
@@ -31,4 +32,11 @@ class Redis implements EngineInterface
         return (string)\Yii::$app->redis->lpop($this->key);
     }
 
+    public function get()
+    {
+    }
+
+    public function remove($id)
+    {
+    }
 }

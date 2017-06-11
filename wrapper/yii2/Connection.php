@@ -13,8 +13,18 @@ class Connection extends \fk\queue\Connection implements Configurable
 
     public function __construct($config = [])
     {
-        if (!empty($config['logPath'])) {
-            $this->logPath = \Yii::getAlias($config['logPath']);
+        $this->setConfig($config);
+        if (!empty($this->logPath)) {
+            $this->logPath = \Yii::getAlias($this->logPath);
+        }
+    }
+
+    protected function setConfig($config)
+    {
+        if (is_array($config)) {
+            foreach ($config as $k => $v) {
+                $this->$k = $v;
+            }
         }
     }
 }
