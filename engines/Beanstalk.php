@@ -7,6 +7,7 @@
 
 namespace fk\queue\engines;
 
+use Pheanstalk\Exception;
 use Pheanstalk\Pheanstalk;
 
 class Beanstalk implements EngineInterface
@@ -40,13 +41,20 @@ class Beanstalk implements EngineInterface
      */
     public function in(string $cmd, $delay = Pheanstalk::DEFAULT_DELAY): bool
     {
-        return 0 < $this->driver
-            ->useTube($this->tube)
-            ->put(
-                $cmd,
-                Pheanstalk::DEFAULT_PRIORITY,
-                $delay
-            );
+        try {
+            return 0 < $this->driver
+                ->useTube($this->tube)
+                ->put(
+                    $cmd,
+                    Pheanstalk::DEFAULT_PRIORITY,
+                    $delay
+                );
+
+        } catch (Exception $e) {
+            \Yii::error($e);
+            \Yii::error('job size: ' . strlen($cmd));
+            return false;
+        }
     }
 
     public function out()
