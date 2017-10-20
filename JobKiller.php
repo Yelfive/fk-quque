@@ -19,7 +19,7 @@ class JobKiller
     /**
      * @var array
      */
-    protected $queuePIDs = [];
+    public $queuePIDs = [];
 
     public function __construct()
     {
@@ -44,9 +44,8 @@ class JobKiller
         $header = exec('ps aux | head -n 1');
         $PIDIndex = array_search('PID', $this->fields($header));
 
-        exec("ps aux|grep -E '$this->cmd'", $lines);
-        array_pop($lines);
-        array_pop($lines);
+        exec("ps aux|grep -E '$this->cmd'|grep -v 'grep'", $lines);
+
         $ids = [];
         foreach ($lines as $line) {
             $ids[] = $this->fields($line, $PIDIndex);
@@ -60,7 +59,7 @@ class JobKiller
         $header = $this->fields($output);
         $PIDIndex = array_search('PID', $header);
         $PPIDIndex = array_search('PPID', $header);
-        exec('ps lax| grep php', $lines);
+        exec('ps lax| grep -E "php "|grep -v grep|grep -v defunct', $lines);
 
         $targetIDs = [];
         foreach ($lines as $line) {
@@ -75,7 +74,9 @@ class JobKiller
                 $targetIDs[] = $PID;
             }
         }
+
         if ($targetIDs) $targetIDs = array_merge($targetIDs, $this->findExpired($targetIDs, $timeout));
+
         return $targetIDs;
     }
 
