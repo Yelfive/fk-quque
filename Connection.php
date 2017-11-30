@@ -6,6 +6,8 @@
 
 namespace fk\queue;
 
+use fk\daemon\Daemon;
+use fk\helpers\Dumper;
 use fk\queue\commands\Command;
 use fk\queue\commands\CommandInterface;
 use fk\queue\engines\EngineInterface;
@@ -29,6 +31,11 @@ class Connection
     public $logPath = '';
 
     /**
+     * @var int How many times to try execution until success
+     */
+    public $maxExecutionTimes = 10;
+
+    /**
      * Queue in
      * @param string|array|Command $cmd
      * ```php
@@ -45,9 +52,10 @@ class Connection
      *  // Apply yii command, a.k.a `php yii match/clean user tag`
      *  $cmd = new Command(['match/clean', 'user', 'tag']);
      * ```
+     * @param int $delay
      * @return bool
      */
-    public function in($cmd)
+    public function in($cmd, $delay = 0)
     {
         if ($cmd instanceof CommandInterface) {
             $cmd = $cmd->parse();
@@ -55,13 +63,14 @@ class Connection
 
         is_array($cmd) && $cmd = implode(' && ', $cmd);
 
-        return $cmd ? $this->getEngine()->in($cmd) : false;
+        return $cmd ? $this->getEngine()->in($cmd, $delay) : false;
     }
 
     /**
      * Executes one job
+     * @param bool $logNil
      */
-    public function execute()
+    public function execute($logNil)
     {
         // TODO: echo -> log, `[date] message`
         $cmd = $this->getEngine()->out();
@@ -77,9 +86,40 @@ class Connection
                     ], true));
             }
             echo "done!\n";
-        } else {
+        } else if ($logNil) {
             echo "Nil\n";
         }
+    }
+
+    /**
+     * @return bool Where succeeded executing
+     */
+    public function executeTillSuccess(): bool
+    {
+        /** @var \Pheanstalk\Job $job */
+        $job = $this->getEngine()->get();
+        if (!$job) return true;
+
+        $cmd = $job->getData();
+
+        $maxExecutionTimes = $this->maxExecutionTimes;
+        while ($maxExecutionTimes--) {
+            $trial = $this->maxExecutionTimes - $maxExecutionTimes;
+            list ($exitCode, $message) = Daemon::fireCommand($cmd);
+            if (!$exitCode) {
+                if ($trial !== 1) $this->log("$trial trial, success");
+                break;
+            }
+            $message = Dumper::dump([
+                'cmd' => $cmd,
+                'message' => $message
+            ]);
+            $this->log("$trial trial, failed with message: $message");
+        }
+
+        $this->getEngine()->remove($job);
+
+        return false;
     }
 
     /**
@@ -94,8 +134,8 @@ class Connection
         if (method_exists($this->getEngine(), 'log')) {
             $this->getEngine()->log($message);
         } else if ($this->logPath && is_dir(dirname($this->logPath))) {
-            is_scalar($message) || $message = print_r($message, true);
-            $log = '[' . date('Y-m-d H:i:s') . "] $message\n\n";
+            if (!is_scalar($message)) $message = print_r($message, true);
+            $log = '[' . date('Y-m-d H:i:s') . "] $message\n";
             file_put_contents($this->logPath, $log, FILE_APPEND);
         }
     }

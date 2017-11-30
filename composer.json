@@ -11,9 +11,6 @@
             "name": "Felix"
         }
     ],
-    "require": {
-        "php": ">=7.0"
-    },
     "autoload": {
         "psr-4": {
             "fk\\queue\\": ""
@@ -24,5 +21,11 @@
         "branch-alias": {
             "dev-master": "1.0-dev"
         }
+    },
+    "require": {
+        "php": ">=7.0",
+        "fk/daemon": "*",
+        "fk/helpers": "*",
+        "pda/pheanstalk": "*"
     }
 }
